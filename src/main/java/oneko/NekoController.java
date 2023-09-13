@@ -1,4 +1,4 @@
-/*
+package oneko;/*
  * @(#)NekoController.java  2.0.1  2019-02-02
  *
  * Copyright (c) 2019 Jerry Reno

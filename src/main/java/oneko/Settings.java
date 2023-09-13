@@ -1,4 +1,4 @@
-/*
+package oneko;/*
  * @(#)Settings.java  2.0.01  2019-02-02
  *
  * Copyright (c) 2019 Jerry Reno
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Properties;
 
 /** Simple file-overridable resources */

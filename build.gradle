@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group "oneko"
+archivesBaseName = "oneko"
+version "2.0.3"
+
+run {
+ application {
+     mainClassName = "Neko"
+ }
+}

@@ -26,7 +26,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JWindow;
 import javax.swing.WindowConstants;
 
 /**
@@ -58,26 +57,22 @@ public class Neko {
 	private NekoController controller;
 
 	/** Creates new form Neko */
-	public Neko() {
+	public Neko(JFrame catbox) {
+		this.catbox = catbox;
 		settings=new NekoSettings();
 		initComponents();
 		controller=new NekoController(settings,catbox,freeLabel,boxLabel);
-		setWindowMode();
+		controller.moveCatInBox();
 	}
 
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 */
 	private void initComponents() {
-		catbox=new JFrame("猫");
-		catbox.setBackground(new Color(200,200,200,255));
-		catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
 		freeLabel = new JLabel();
 		boxLabel = new JLabel();
 
 		catbox.getContentPane().add(boxLabel);
-		catbox.pack();
 
 		// We really don't want a layout manager messing with us.
 		// Maybe this class should BE a layout manager.
@@ -94,6 +89,7 @@ public class Neko {
 				controller.catboxMoved();
 			}
 		});
+
 		catbox.addWindowListener(new WindowAdapter() {
 			public void windowDeiconified(WindowEvent e) {
 				controller.catboxDeiconified();
@@ -105,19 +101,15 @@ public class Neko {
 	 * @param args the command line arguments
 	 */
 	public static void main(String args[]) {
-		EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(() -> {
+			var catbox=new JFrame("猫");
+			catbox.setSize(16*32, 9*32);
+			catbox.setBackground(new Color(200,200,200,255));
+			catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			catbox.setVisible(true);
 
-			public void run() {
-				new Neko();
-			}
+			new Neko(catbox);
 		});
-	}
-
-	public void setWindowMode()
-	{
-		catbox.setTitle("猫");
-		catbox.setVisible(true);
-		controller.moveCatInBox();
 	}
 }
 

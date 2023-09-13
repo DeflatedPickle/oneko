@@ -93,9 +93,8 @@ public class NekoController {
 		loadKitten();
 		w=image[1].getIconWidth();
 		h=image[1].getIconHeight();
-		//invisibleWindow.setLocation(ox + windowOffset.x, oy + windowOffset.y);
+
 		boxLabel.setSize(w,h);
-		catbox.setSize(16*w, 9*h);
 
 		timer = new Timer(50, new ActionListener() {
 
@@ -435,8 +434,6 @@ public class NekoController {
 	}
 
 	public void moveCatInBox() {
-		Dimension d=catbox.getSize();
-		catbox.setLocation(ox-d.width/2,Math.max(0,oy-d.height/2));
 		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
 		if (pointerInfo==null) return;
 		calculateBounds();

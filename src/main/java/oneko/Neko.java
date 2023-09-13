@@ -22,9 +22,6 @@ import java.awt.EventQueue;
 import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -48,7 +45,6 @@ import javax.swing.WindowConstants;
  * <br>1.0 2010-07-16 Created.
  */
 public class Neko {
-
 	//
 	//Constants
 	private static Dimension MINSIZE=new Dimension(64,64);
@@ -57,7 +53,6 @@ public class Neko {
 	//
 	// UI Components
 	private JFrame catbox;
-	private JWindow invisibleWindow;
 	private JLabel freeLabel,boxLabel;
 	private NekoSettings settings;
 	private NekoController controller;
@@ -66,9 +61,8 @@ public class Neko {
 	public Neko() {
 		settings=new NekoSettings();
 		initComponents();
-		invisibleWindow.setLocation(100,100);
-		controller=new NekoController(settings,invisibleWindow,catbox,freeLabel,boxLabel);
-		setWindowMode(false);
+		controller=new NekoController(settings,catbox,freeLabel,boxLabel);
+		setWindowMode();
 	}
 
 	/** This method is called from within the constructor to
@@ -78,25 +72,10 @@ public class Neko {
 		catbox=new JFrame("猫");
 		catbox.setBackground(new Color(200,200,200,255));
 		catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		invisibleWindow=new JWindow();
-		invisibleWindow.getRootPane().putClientProperty("Window.shadow", false);
-		invisibleWindow.setBackground(new Color(200,200,200,0)); // transparent, light grey of not supported
-		invisibleWindow.setAlwaysOnTop(true);
 
 		freeLabel = new JLabel();
 		boxLabel = new JLabel();
 
-		MouseListener mouseMoveListener = new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				if ((evt.getSource() == freeLabel)||(evt.getSource() == boxLabel)) {
-					imageClicked(evt);
-				}
-			}
-		};
-
-		freeLabel.addMouseListener(mouseMoveListener);
-		boxLabel.addMouseListener(mouseMoveListener);
-		invisibleWindow.getContentPane().add(freeLabel, BorderLayout.CENTER);
 		catbox.getContentPane().add(boxLabel);
 		catbox.pack();
 
@@ -120,12 +99,6 @@ public class Neko {
 				controller.catboxDeiconified();
 			}
 		});
-
-		invisibleWindow.pack();
-	}
-
-	private void imageClicked(MouseEvent evt) {
-		setWindowMode(!controller.getWindowMode());
 	}
 
 	/**
@@ -140,21 +113,11 @@ public class Neko {
 		});
 	}
 
-	public void setWindowMode(boolean windowed)
+	public void setWindowMode()
 	{
-		controller.setWindowMode(windowed);
-		if (windowed) {
-			catbox.setTitle("猫");
-			invisibleWindow.setVisible(false);
-
-			catbox.setVisible(true);
-		}
-		else {
-			catbox.setVisible(false);
-			invisibleWindow.setVisible(true);
-		}
+		catbox.setTitle("猫");
+		catbox.setVisible(true);
 		controller.moveCatInBox();
 	}
-
 }
 

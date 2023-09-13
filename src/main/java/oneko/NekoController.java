@@ -55,7 +55,6 @@ public class NekoController {
 
 	//
 	//Variables
-	private boolean windowMode;
 	private int ox, oy;   //image pos.
 	private int no;	   //image number.
 	private int init;	 //for image loading initialize counter
@@ -65,14 +64,12 @@ public class NekoController {
 	private int ilc2;	 //second loop counter
 	private boolean mouseMoved; //mouse move, flag
 	private ImageIcon image[];  //images
-	private Point windowOffset = new Point(-16, -30);
 	private Rectangle nekoBounds = new Rectangle();
 	private Timer timer;
 	private int w,h; // size of icons
 
 	//
 	// UI Components
-	private JWindow invisibleWindow;
 	private JFrame catbox;
 	private JLabel freeLabel,boxLabel;
 	private NekoSettings settings;
@@ -80,17 +77,14 @@ public class NekoController {
 	/** Creates new form Neko */
 	public NekoController(
 			NekoSettings settings,
-			JWindow invisibleWindow,
 			JFrame visibleWindow,
 			JLabel free,
 			JLabel boxed
 	) {
 		this.settings=settings;
-		this.invisibleWindow=invisibleWindow;
 		this.catbox=visibleWindow;
 		this.freeLabel=free;
 		this.boxLabel=boxed;
-		this.windowMode=false;
 
 		this.init=0;
 		this.state=0;
@@ -99,7 +93,6 @@ public class NekoController {
 		loadKitten();
 		w=image[1].getIconWidth();
 		h=image[1].getIconHeight();
-		invisibleWindow.setSize(w,h);
 		//invisibleWindow.setLocation(ox + windowOffset.x, oy + windowOffset.y);
 		boxLabel.setSize(w,h);
 		catbox.setSize(16*w, 9*h);
@@ -128,41 +121,17 @@ public class NekoController {
 		image[0]=image[25];
 	}
 
-	public int getWidth() { return w;}
-	public int getHeight() { return h;}
-	public boolean getWindowMode() { return this.windowMode;}
-
-	private void calculateBounds(PointerInfo pointerInfo)
+	private void calculateBounds()
 	{
-		if(windowMode)
-		{
-			// nekoBounds is the area of the window that the Neko can be in
-			Point panePoint = catbox.getContentPane().getLocationOnScreen();
-			Insets paneInsets=catbox.getContentPane().getInsets();
-			Dimension sz=catbox.getContentPane().getSize();
+		// nekoBounds is the area of the window that the Neko can be in
+		Point panePoint = catbox.getContentPane().getLocationOnScreen();
+		Insets paneInsets=catbox.getContentPane().getInsets();
+		Dimension sz=catbox.getContentPane().getSize();
 
-			nekoBounds.x = panePoint.x + paneInsets.left + w/2;
-			nekoBounds.y = panePoint.y + paneInsets.top + h;
-			nekoBounds.width = sz.width - paneInsets.left - paneInsets.right - w;
-			nekoBounds.height = sz.height - paneInsets.left - paneInsets.top - h;
-		}
-		else
-	{
-			GraphicsDevice mouseMonitor=pointerInfo.getDevice();
-			if (mouseMonitor==null) return;
-			GraphicsConfiguration gc = mouseMonitor.getDefaultConfiguration();
-			if ( gc==null) return;
-			Rectangle screenBounds = gc.getBounds();
-			if ( screenBounds==null) return;
-			Toolkit tk = invisibleWindow.getToolkit();
-			Insets screenInsets = tk.getScreenInsets(gc);
-			if ( screenInsets==null) return;
-			// nekoBounds is the area of the screen that the Neko can be in
-			nekoBounds.x = screenBounds.x + screenInsets.left + w/2;
-			nekoBounds.y = screenBounds.y + screenInsets.top + h;
-			nekoBounds.width = screenBounds.width - screenInsets.left - screenInsets.right - w;
-			nekoBounds.height = screenBounds.height - screenInsets.left - screenInsets.top - h;
-		}
+		nekoBounds.x = panePoint.x + paneInsets.left + w/2;
+		nekoBounds.y = panePoint.y + paneInsets.top + h;
+		nekoBounds.width = sz.width - paneInsets.left - paneInsets.right - w;
+		nekoBounds.height = sz.height - paneInsets.left - paneInsets.top - h;
 	}
 
 	/** Locates the mouse on the screen and determines what the cat shall do. */
@@ -175,7 +144,7 @@ public class NekoController {
 		int mx = mouseLocation.x + settings.getOffsetX();
 		int my = mouseLocation.y + settings.getOffsetY();
 
-		calculateBounds(pointerInfo);
+		calculateBounds();
 
 		//Determines what the cat should do, if the mouse moves
 		Position pos = null;
@@ -461,27 +430,16 @@ public class NekoController {
 	}
 
 	private void moveCat() {
-		if(windowMode) {
-			// note that ox,oy are screen-relative
-			boxLabel.setLocation(ox-nekoBounds.x, oy-nekoBounds.y);
-		}
-		else {
-			invisibleWindow.setLocation(ox + windowOffset.x, oy + windowOffset.y);
-		}
-	}
-
-	public void setWindowMode(boolean windowed) {
-		this.windowMode=windowed;
+		// note that ox,oy are screen-relative
+		boxLabel.setLocation(ox-nekoBounds.x, oy-nekoBounds.y);
 	}
 
 	public void moveCatInBox() {
-		if ( windowMode ) {
-			Dimension d=catbox.getSize();
-			catbox.setLocation(ox-d.width/2,Math.max(0,oy-d.height/2));
-		}
+		Dimension d=catbox.getSize();
+		catbox.setLocation(ox-d.width/2,Math.max(0,oy-d.height/2));
 		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
 		if (pointerInfo==null) return;
-		calculateBounds(pointerInfo);
+		calculateBounds();
 		moveCat();
 	}
 
@@ -489,28 +447,25 @@ public class NekoController {
 		// Calculate the new nekoBounds
 		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
 		if (pointerInfo==null) return;
-		calculateBounds(pointerInfo);
+		calculateBounds();
 		// Move the cat to the center of the window
 		ox=nekoBounds.x+nekoBounds.width/2;
 		oy=nekoBounds.y+nekoBounds.height/2;
 	}
 
 	public void catboxMoved() {
-		if ( windowMode ) {
-			// The window moved. We have the old location in nekoBounds.
-			int oldx=nekoBounds.x;
-			int oldy=nekoBounds.y;
-			// Calculate the new nekoBounds
-			PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-			if (pointerInfo==null) return;
-			calculateBounds(pointerInfo);
-			// How much did it move?
-			int dx=nekoBounds.x-oldx;
-			int dy=nekoBounds.y-oldy;
-			ox+=dx;
-			oy+=dy;
-			// don't need to move the jlabel, it will have moved with the window
-		}
+		// The window moved. We have the old location in nekoBounds.
+		int oldx=nekoBounds.x;
+		int oldy=nekoBounds.y;
+		// Calculate the new nekoBounds
+		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+		if (pointerInfo==null) return;
+		calculateBounds();
+		// How much did it move?
+		int dx=nekoBounds.x-oldx;
+		int dy=nekoBounds.y-oldy;
+		ox+=dx;
+		oy+=dy;
 	}
 
 }

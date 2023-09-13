@@ -13,22 +13,17 @@
 
 package oneko;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JWindow;
-import javax.swing.Timer;
 
 /**
  * Neko the cat.
@@ -96,14 +91,11 @@ public class NekoController {
 
 		boxLabel.setSize(w,h);
 
-		timer = new Timer(50, new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				try {
-					locateMouseAndAnimateCat();
-				}
-				catch (Exception ex) {}
+		timer = new Timer(50, e -> {
+			try {
+				locateMouseAndAnimateCat();
 			}
+			catch (Exception ex) {}
 		});
 		timer.setRepeats(true);
 		timer.start();
@@ -123,9 +115,9 @@ public class NekoController {
 	private void calculateBounds()
 	{
 		// nekoBounds is the area of the window that the Neko can be in
-		Point panePoint = catbox.getContentPane().getLocationOnScreen();
-		Insets paneInsets=catbox.getContentPane().getInsets();
-		Dimension sz=catbox.getContentPane().getSize();
+		Point panePoint = catbox.getGlassPane().getLocationOnScreen();
+		Insets paneInsets = ((JPanel) catbox.getGlassPane()).getInsets();
+		Dimension sz = catbox.getGlassPane().getSize();
 
 		nekoBounds.x = panePoint.x + paneInsets.left + w/2;
 		nekoBounds.y = panePoint.y + paneInsets.top + h;
@@ -434,16 +426,12 @@ public class NekoController {
 	}
 
 	public void moveCatInBox() {
-		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-		if (pointerInfo==null) return;
 		calculateBounds();
 		moveCat();
 	}
 
 	public void catboxDeiconified() {
 		// Calculate the new nekoBounds
-		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-		if (pointerInfo==null) return;
 		calculateBounds();
 		// Move the cat to the center of the window
 		ox=nekoBounds.x+nekoBounds.width/2;

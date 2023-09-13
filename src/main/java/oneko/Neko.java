@@ -13,20 +13,13 @@
 
 package oneko;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 /**
  * Neko the cat.
@@ -44,19 +37,11 @@ import javax.swing.WindowConstants;
  * <br>1.0 2010-07-16 Created.
  */
 public class Neko {
-	//
-	//Constants
-	private static Dimension MINSIZE=new Dimension(64,64);
-	private static Dimension PRFSIZE=new Dimension(64*16,64*9);
-
-	//
-	// UI Components
 	private JFrame catbox;
 	private JLabel freeLabel,boxLabel;
 	private NekoSettings settings;
 	private NekoController controller;
 
-	/** Creates new form Neko */
 	public Neko(JFrame catbox) {
 		this.catbox = catbox;
 		settings=new NekoSettings();
@@ -72,17 +57,8 @@ public class Neko {
 		freeLabel = new JLabel();
 		boxLabel = new JLabel();
 
-		catbox.getContentPane().add(boxLabel);
-
-		// We really don't want a layout manager messing with us.
-		// Maybe this class should BE a layout manager.
-		catbox.getContentPane().setLayout(new LayoutManager() {
-			public void addLayoutComponent(String n,Component c) {}
-			public void layoutContainer(Container p){}
-			public Dimension minimumLayoutSize(Container p) { return MINSIZE;}
-			public Dimension preferredLayoutSize(Container p) { return PRFSIZE;}
-			public void removeLayoutComponent(Component c) {}
-		});
+		((JPanel) catbox.getGlassPane()).add(boxLabel);
+		catbox.getGlassPane().setVisible(true);
 
 		catbox.addComponentListener(new ComponentAdapter() {
 			public void componentMoved(ComponentEvent e) {
@@ -107,6 +83,13 @@ public class Neko {
 			catbox.setBackground(new Color(200,200,200,255));
 			catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			catbox.setVisible(true);
+
+			var menubar = new JMenuBar();
+			var file = new JMenu("File");
+			var neww = new JMenuItem("New");
+			file.add(neww);
+			menubar.add(file);
+			catbox.setJMenuBar(menubar);
 
 			new Neko(catbox);
 		});

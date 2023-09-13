@@ -1,14 +1,35 @@
 plugins {
-    id 'java'
-    id 'application'
+	id 'java'
+	id 'application'
+
+	id 'com.diffplug.spotless' version '6.19.0'
 }
 
 group "oneko"
 archivesBaseName = "oneko"
 version "2.0.3"
 
+repositories {
+	mavenCentral()
+}
+
+spotless {
+	java {
+		importOrder()
+		removeUnusedImports()
+		googleJavaFormat()
+	}
+
+	groovyGradle {
+		target '*.gradle'
+		greclipse()
+	}
+}
+
+compileJava.dependsOn spotlessApply
+
 run {
- application {
-     mainClassName = "oneko.Neko"
- }
+	application {
+		mainClassName = "oneko.Neko"
+	}
 }

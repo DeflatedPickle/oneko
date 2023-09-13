@@ -23,76 +23,69 @@ import javax.swing.*;
 
 /**
  * Neko the cat.
- * <p>
- * This program loads in 32 images of Neko, and tests them. (to show you that
- * they've been loaded). Neko will chase you mouse cursor around the desktop.
- * Once she's over it and the mouse doesn't move she'll prepare to take a nap.
- * If the mouse go's outside the desktop she will reach the border and try
- * to dig for it. She'll eventually give up, and fall asleep.
  *
- * @author Werner Randelshofer (adaption for desktop)
- *		 Chris Parent (original code)
- * @version 1.0.1 2010-07-17 Fixes timers. Sets longer sleep times when the
- * cat sleeps.
- * <br>1.0 2010-07-16 Created.
+ * <p>This program loads in 32 images of Neko, and tests them. (to show you that they've been
+ * loaded). Neko will chase you mouse cursor around the desktop. Once she's over it and the mouse
+ * doesn't move she'll prepare to take a nap. If the mouse go's outside the desktop she will reach
+ * the border and try to dig for it. She'll eventually give up, and fall asleep.
+ *
+ * @author Werner Randelshofer (adaption for desktop) Chris Parent (original code)
+ * @version 1.0.1 2010-07-17 Fixes timers. Sets longer sleep times when the cat sleeps. <br>
+ *     1.0 2010-07-16 Created.
  */
 public class Neko {
-	private JFrame catbox;
-	private JLabel freeLabel,boxLabel;
-	private NekoSettings settings;
-	private NekoController controller;
+  private final JFrame catbox;
+  private JLabel freeLabel, boxLabel;
+  private final NekoController controller;
 
-	public Neko(JFrame catbox) {
-		this.catbox = catbox;
-		settings=new NekoSettings();
-		initComponents();
-		controller=new NekoController(settings,catbox,freeLabel,boxLabel);
-		controller.moveCatInBox();
-	}
+  public Neko(JFrame catbox) {
+    this.catbox = catbox;
+    NekoSettings settings = new NekoSettings();
+    initComponents();
+    controller = new NekoController(settings, catbox, freeLabel, boxLabel);
+    controller.moveCatInBox();
+  }
 
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 */
-	private void initComponents() {
-		freeLabel = new JLabel();
-		boxLabel = new JLabel();
+  /** This method is called from within the constructor to initialize the form. */
+  private void initComponents() {
+    freeLabel = new JLabel();
+    boxLabel = new JLabel();
 
-		((JPanel) catbox.getGlassPane()).add(boxLabel);
-		catbox.getGlassPane().setVisible(true);
+    ((JPanel) catbox.getGlassPane()).add(boxLabel);
+    catbox.getGlassPane().setVisible(true);
 
-		catbox.addComponentListener(new ComponentAdapter() {
-			public void componentMoved(ComponentEvent e) {
-				controller.catboxMoved();
-			}
-		});
+    catbox.addComponentListener(
+        new ComponentAdapter() {
+          public void componentMoved(ComponentEvent e) {
+            controller.catboxMoved();
+          }
+        });
 
-		catbox.addWindowListener(new WindowAdapter() {
-			public void windowDeiconified(WindowEvent e) {
-				controller.catboxDeiconified();
-			}
-		});
-	}
+    catbox.addWindowListener(
+        new WindowAdapter() {
+          public void windowDeiconified(WindowEvent e) {
+            controller.catboxDeiconified();
+          }
+        });
+  }
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		EventQueue.invokeLater(() -> {
-			var catbox=new JFrame("猫");
-			catbox.setSize(16*32, 9*32);
-			catbox.setBackground(new Color(200,200,200,255));
-			catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-			catbox.setVisible(true);
+  public static void main(String[] args) {
+    EventQueue.invokeLater(
+        () -> {
+          var catbox = new JFrame("猫");
+          catbox.setSize(16 * 32, 9 * 32);
+          catbox.setBackground(new Color(200, 200, 200, 255));
+          catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+          catbox.setVisible(true);
 
-			var menubar = new JMenuBar();
-			var file = new JMenu("File");
-			var neww = new JMenuItem("New");
-			file.add(neww);
-			menubar.add(file);
-			catbox.setJMenuBar(menubar);
+          var menubar = new JMenuBar();
+          var file = new JMenu("File");
+          var neww = new JMenuItem("New");
+          file.add(neww);
+          menubar.add(file);
+          catbox.setJMenuBar(menubar);
 
-			new Neko(catbox);
-		});
-	}
+          new Neko(catbox);
+        });
+  }
 }
-

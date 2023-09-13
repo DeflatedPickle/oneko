@@ -1,20 +1,17 @@
-package oneko;/*
- * @(#)NekoController.java  2.0.1  2019-02-02
- *
+/*
+ * Copyright (c) 2023 DeflatedPickle
  * Copyright (c) 2019 Jerry Reno
- * This is public domain software, under the terms of the UNLICENSE
- * http://unlicense.org 
- * 
- * This is an extended version of the earlier Java Neko 1.0:
  * Copyright (c) 2010 Werner Randelshofer
- * Hausmatt 10, Immensee, CH-6405, Switzerland.
  *
- * This source code is free to everyone.
+ * This is public domain software, under the terms of the UNLICENSE
+ * http://unlicense.org
  *
  * This is a desktop adaptation of the applet
  * JAVA NEKO V1.0 by Chris Parent, 1999.
  * http://mysite.ncnetwork.net/res8t1xo/class/neko.htm
  */
+
+package oneko;
 
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
@@ -81,7 +78,13 @@ public class NekoController {
 	private NekoSettings settings;
 
 	/** Creates new form Neko */
-	public NekoController(NekoSettings settings,JWindow invisibleWindow,JFrame visibleWindow,JLabel free,JLabel boxed) {
+	public NekoController(
+			NekoSettings settings,
+			JWindow invisibleWindow,
+			JFrame visibleWindow,
+			JLabel free,
+			JLabel boxed
+	) {
 		this.settings=settings;
 		this.invisibleWindow=invisibleWindow;
 		this.catbox=visibleWindow;
@@ -120,7 +123,7 @@ public class NekoController {
 		// image[0] is a default, image[25] is part of the wash animation with image[31]
 		image = new ImageIcon[33];
 		for (int i = 1; i <= 32; i++) {
-			image[i] = new ImageIcon(Neko.class.getResource("images/" + i + ".GIF"));
+			image[i] = new ImageIcon(Neko.class.getResource("/images/" + i + ".GIF"));
 		}
 		image[0]=image[25];
 	}

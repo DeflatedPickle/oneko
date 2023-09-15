@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'application'
 
-	id 'com.diffplug.spotless' version '6.19.0'
+	id 'org.jetbrains.kotlin.jvm' version '1.8.21'
 }
 
 group "oneko"
@@ -13,20 +13,10 @@ repositories {
 	mavenCentral()
 }
 
-spotless {
-	java {
-		importOrder()
-		removeUnusedImports()
-		googleJavaFormat()
-	}
-
-	groovyGradle {
-		target '*.gradle'
-		greclipse()
-	}
+dependencies {
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+	implementation 'org.apache.commons:commons-imaging:1.0-alpha3'
 }
-
-compileJava.dependsOn spotlessApply
 
 run {
 	application {

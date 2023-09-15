@@ -13,12 +13,20 @@
 
 package oneko;
 
+import com.deflatedpickle.oneko.ColourMaskImageIcon;
+import com.deflatedpickle.oneko.NekoUtil;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.internal.Util;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -72,7 +80,7 @@ public class NekoController {
   private NekoSettings settings;
 
   /** Creates new form Neko */
-  public NekoController(NekoSettings settings, JFrame visibleWindow, JLabel free, JLabel boxed) {
+  public NekoController(String pack, NekoSettings settings, JFrame visibleWindow, JLabel free, JLabel boxed) throws IOException, ImageReadException {
     this.settings = settings;
     this.catbox = visibleWindow;
     this.freeLabel = free;
@@ -82,7 +90,7 @@ public class NekoController {
     this.state = 0;
     this.slp = 0;
 
-    loadKitten();
+    loadKitten(pack);
     w = image[1].getIconWidth();
     h = image[1].getIconHeight();
 
@@ -101,12 +109,28 @@ public class NekoController {
     timer.start();
   }
 
-  private void loadKitten() {
+  private void loadKitten(String pack) throws IOException, ImageReadException {
     // Note: The files start with 1. image[0] is a copy of 25.
     // image[0] is a default, image[25] is part of the wash animation with image[31]
     image = new ImageIcon[33];
+
     for (int i = 1; i <= 32; i++) {
-      image[i] = new ImageIcon(Neko.class.getResource("/images/" + i + ".GIF"));
+      BufferedImage img;
+      BufferedImage mask;
+
+      if (pack.equals("neko")) {
+        img = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmaps/" + pack + "/" + NekoUtil.INSTANCE.frameToName(i) + ".xbm").readAllBytes(), null);
+        mask = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmasks/" + pack + "/" + NekoUtil.INSTANCE.frameToName(i) + "_mask.xbm").readAllBytes(), null);
+      } else if (pack.equals("tora")) {
+        img = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmaps/" + pack + "/" + NekoUtil.INSTANCE.frameToName(i) + "_" + pack + ".xbm").readAllBytes(), null);
+        mask = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmasks/neko/" + NekoUtil.INSTANCE.frameToName(i) + "_mask.xbm").readAllBytes(), null);
+      } else {
+        img = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmaps/" + pack + "/" + NekoUtil.INSTANCE.frameToName(i) + "_" + pack + ".xbm").readAllBytes(), null);
+        mask = Util.getImageParser(ImageFormats.XBM).getBufferedImage(Neko.class.getResourceAsStream("/bitmasks/" + pack + "/" + NekoUtil.INSTANCE.frameToName(i) + "_" + pack + "_mask.xbm").readAllBytes(), null);
+      }
+
+      var colorMaskImageIcon = new ColourMaskImageIcon(img, mask);
+      image[i] = colorMaskImageIcon;
     }
     image[0] = image[25];
   }
